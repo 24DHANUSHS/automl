@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Auto ML </title>
   <!-- plugins:css -->
+
+
  <link rel="stylesheet" href="{{url_for('static',filename='vendors/feather/feather.css')}}">
   <link rel="stylesheet" href="{{url_for('static',filename='vendors/mdi/css/materialdesignicons.min.css')}}">
   <link rel="stylesheet" href="{{url_for('static',filename='vendors/ti-icons/css/themify-icons.css')}}">
@@ -168,13 +170,15 @@
                                     <thead>
                                       <tr>
 
-                                        <th>Column Name</th>
-                                        <th>Column Type</th>
-                                        <th>Correct Values</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
                                         <th>Nan Values</th>
-                                        <th>Column Type</th>
-                                        <th>Correct Values</th>
-                                        <th>Nan Values</th>
+
+                                        <th>Mean</th>
+                                        <th>Median</th>
+                                        <th>Mode</th>
+                                         <th>Row drop</th>
+
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -184,25 +188,53 @@
                                           <div class="d-flex ">
 
                                             <div>
-                                              <h6>{{cols[i]}}</h6>
+                                              <h4 style="color:black;text-transform: capitalize;">{{cols[i]}}</h4>
+                                              {% if cols_type[i]=='object' %}
+                                              <a type="button" class="btn btn-info" href="{{url_for('drop_dummies',type='dummies',cols=cols[i])}}">Get Dummies</a>
+                                              {% endif %}
+                                          <br>
+                                          <a type="button" class="btn btn-danger" href="{{url_for('drop_dummies',type='drop',cols=cols[i])}}">Drop</a>
 
                                             </div>
                                           </div>
                                         </td>
                                         <td>
                                           <h6>{{cols_type[i]}}</h6>
-
                                         </td>
                                         <td>
-
-
-
-                                              <h6>{{row_len[i]}}</h6>
-
-
-
+                                               <h6 style="color:red">{{nan_len[i]}}</h6>__<h6>{{row_len[i]+nan_len[i]}}</h6>
                                         </td>
-                                        <td><h6>{{nan_len[i]}}</h6></td>
+
+                                        <td>
+                                          {% if nan_len[i]==0 or ct[0][i]=='Str'%}
+                                          <h6>-</h6>
+                                          {% else %}
+                                          <h6><a type="button" class="btn btn-warning" href="{{url_for('replace_nan',type='mean',cols=cols[i])}}">Replace</a></h6>
+                                          {% endif %}
+                                          <p>Mean: {{ct[0][i]}}</p>
+                                        </td>
+                                        <td>
+                                          {% if nan_len[i]==0 or ct[1][i]=='Str' %}
+                                           <h6>-</h6>
+                                          {% else %}
+                                          <h6><a type="button" class="btn btn-success" href="{{url_for('replace_nan',type='median',cols=cols[i])}}">Replace</a></h6>
+                                          {% endif %}
+                                          <p>Median: {{ct[1][i]}}</p>
+                                        </td>
+                                        <td>
+                                          {% if nan_len[i]==0 or ct[2][i]=='Str' %}
+                                           <h6>-</h6>
+                                          {% else %}
+                                          <h6><a type="button" class="btn btn-info" href="{{url_for('replace_nan',type='mode',cols=cols[i])}}">Replace</a></h6>
+                                          {% endif %}
+                                          <p>Mode: {{ct[2][i]}}</p>
+                                        </td>
+                                        <td>
+                                          <h6> <a type="button" class="btn btn-secondary" href="{{url_for('drop_dummies',type='dummies1',cols=cols[i])}}">Row Drop</a></h6>
+                                        </td>
+
+
+
                                       </tr>
                                     {% endfor %}
 
@@ -315,8 +347,15 @@
                            {% for j in cols %}
 
                           <td>
+                          {% if data[j][i]==NaN %}
+                            <p style="color:red">{{data[j][i]}}</p>
+                            {% else %}
+                            <p>{{data[j][i]}}
+                            {% endif %}
 
-                            {{data[j][i]}}
+
+
+
                           </td>
                           {% endfor %}
 
@@ -349,6 +388,7 @@
   <!-- container-scroller -->
 
   <!-- plugins:js -->
+
   <script src="{{url_for('static',filename='vendors/js/vendor.bundle.base.js')}}"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
@@ -455,6 +495,7 @@
 
 
   </script>
+
 </body>
 
 </html>
