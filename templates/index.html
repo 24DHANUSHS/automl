@@ -40,7 +40,7 @@
             <h3>Auto Ml</h3>
           </a>
           <a class="navbar-brand brand-logo-mini" href="index.html">
-            <h3>A</h3>
+
           </a>
         </div>
       </div>
@@ -66,7 +66,7 @@
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="index.html">
+           <a class="nav-link" href="{{url_for('home')}}">
               <i class="mdi mdi-grid-large menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
@@ -81,7 +81,7 @@
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('table_page')}}">Basic table</a></li>
               </ul>
             </div>
           </li>
@@ -93,7 +93,8 @@
             </a>
             <div class="collapse" id="charts">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/charts/chartjs.html">ChartJs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('chart')}}">Scatter Plot</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('box_chart')}}">Box plot</a></li>
               </ul>
             </div>
           </li>
@@ -101,33 +102,48 @@
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="menu-icon mdi mdi-layers-outline"></i>
-              <span class="menu-title">Icons</span>
+              <span class="menu-title">Prediction</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/icons/mdi.html">Mdi icons</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('predict')}}">Predict</a></li>
               </ul>
             </div>
           </li>
-          <li class="nav-item nav-category">pages</li>
+          <li class="nav-item nav-category">Implementation</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="menu-icon mdi mdi-account-circle-outline"></i>
-              <span class="menu-title">User Pages</span>
+              <span class="menu-title">Website Demo </span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="auth">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
+                {% if trigger== True %}
+                {% if type=='regression' %}
+               <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='linear')}}"> Linear/Multi Regression </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='poly')}}"> Polynomial Regression </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='ridge')}}"> Ridge Regression </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='lasso')}}"> Lasso Regression </a></li>
+                {% else %}
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='logistic')}}"> Logisitic Regression </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='knn')}}"> Knn </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='decision')}}"> Decision Tree </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='navie')}}"> Navie Bayes </a></li>
+                {% endif %}
+                {% else %}
+                <li class="nav-item"> Models not generated </li>
+                {% endif %}
+
               </ul>
             </div>
           </li>
-          <li class="nav-item nav-category">help</li>
+
           <li class="nav-item">
-            <a class="nav-link" href="http://bootstrapdash.com/demo/star-admin2-free/docs/documentation.html">
-              <i class="menu-icon mdi mdi-file-document"></i>
-              <span class="menu-title">Documentation</span>
+            <a class="nav-link" href="{{url_for('logout')}}">
+              <i class="menu-icon mdi mdi-logout"></i>
+              <span class="menu-title" style="color:red">Logout</span>
             </a>
           </li>
         </ul>
@@ -151,17 +167,22 @@
                     </div> 
                     
                     <div class="row">
-                      <div class="col-lg-8 d-flex flex-column">
+                      <div class="col-lg-12 d-flex flex-column">
                         
                         
                         <div class="row flex-grow">
-                          <div class="col-12 grid-margin stretch-card">
+
                             <div class="card card-rounded">
                               <div class="card-body">
                                 <div class="d-sm-flex justify-content-between align-items-start">
                                   <div>
                                     <h4 class="card-title card-title-dash">DATA INFO</h4>
                                    <p class="card-subtitle card-subtitle-dash">{{len}} columns have found</p>
+                                    <p class="card-subtitle card-subtitle-dash">Null value percentage <b style="color:red">{{nan_}}%</b></p>
+                                    {% if nan_>50 %}
+                                    <p class="card-subtitle card-subtitle-dash"><b style="color:red">** Contains more than 50 % null values</b></p>
+                                    {%endif %}
+                                    <p class="card-subtitle card-subtitle-dash">Outlier percentage <b style="color:red">{{outlier_per}} %</b></p>
                                   </div>
                                   
                                 </div>
@@ -178,6 +199,7 @@
                                         <th>Median</th>
                                         <th>Mode</th>
                                          <th>Row drop</th>
+                                        <th>Drop outlier</th>
 
                                       </tr>
                                     </thead>
@@ -232,6 +254,13 @@
                                         <td>
                                           <h6> <a type="button" class="btn btn-secondary" href="{{url_for('drop_dummies',type='dummies1',cols=cols[i])}}">Row Drop</a></h6>
                                         </td>
+                                        <td>
+                                          {% if cols[i] in outlier %}
+                                          <h6> <a type="button" class="btn btn-secondary" href="{{url_for('remove_outlier',cols=cols[i])}}">Outlier</a></h6>
+                                          {% else %}
+                                          -
+                                          {% endif %}
+                                        </td>
 
 
 
@@ -244,7 +273,7 @@
                               </div>
                             </div>
                           </div>
-                        </div>
+
                         <div class="row flex-grow">
                           <div class="col-md-6 col-lg-6 grid-margin stretch-card">
 
@@ -254,131 +283,74 @@
                           </div>
                         </div>
                         </div>
-                      <div class="col-lg-4 d-flex flex-column">
-                        <div class="row flex-grow">
-                          <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                              <div class="card-body">
-                                <div class="row">
-                                  <div class="col-lg-12">
+<!--                      <div class="col-lg-4 d-flex flex-column">-->
+<!--                        <div class="row flex-grow">-->
+<!--                          <div class="col-12 grid-margin stretch-card">-->
+<!--                            <div class="card card-rounded">-->
+<!--                              <div class="card-body">-->
+<!--                                <div class="row">-->
+<!--                                  <div class="col-lg-12">-->
 
-                                    <div class="list-wrapper">
-                                      <ul class="todo-list todo-list-rounded">
+<!--                                    <div class="list-wrapper">-->
+<!--                                      <ul class="todo-list todo-list-rounded">-->
 
-                                          <div class="form-check w-100">
-                                            <label class="form-check-label">
-                                               <h4 class="card-title card-title-dash">Download File</h4>
-                                              <br>
-                                               <button type="button" class="btn btn-info btn-icon-text">
-                                                        Download CSV
-                                                    <i class="ti-printer btn-icon-append"></i>
-                                              </button>
-                                            </label>
+<!--                                          <div class="form-check w-100">-->
+<!--                                            <label class="form-check-label">-->
+<!--                                               <h4 class="card-title card-title-dash">Download File</h4>-->
+<!--                                              <br>-->
+<!--                                               <button type="button" class="btn btn-info btn-icon-text">-->
+<!--                                                        Download CSV-->
+<!--                                                    <i class="ti-printer btn-icon-append"></i>-->
+<!--                                              </button>-->
+<!--                                            </label>-->
 
-                                          </div>
-                                        </li>
+<!--                                          </div>-->
+<!--                                        </li>-->
 
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row flex-grow">
-                          <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                              <div class="card-body">
-                                <div class="row">
-                                  <div class="col-lg-12">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                      <h4 class="card-title card-title-dash">Values Count</h4>
-                                    </div>
-                                   <canvas class="my-auto" id="doughnutChart" height="200"></canvas>
-                                    <div id="doughnut-chart-legend" class="mt-5 text-center"></div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row flex-grow">
-                          <div class="col-12 grid-margin stretch-card">
+<!--                                      </ul>-->
+<!--                                    </div>-->
+<!--                                  </div>-->
+<!--                                </div>-->
+<!--                              </div>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                        <div class="row flex-grow">-->
+<!--                          <div class="col-12 grid-margin stretch-card">-->
+<!--                            <div class="card card-rounded">-->
+<!--                              <div class="card-body">-->
+<!--                                <div class="row">-->
+<!--                                  <div class="col-lg-12">-->
+<!--                                    <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--                                      <h4 class="card-title card-title-dash">Values Count</h4>-->
+<!--                                    </div>-->
+<!--                                   <canvas class="my-auto" id="doughnutChart" height="200"></canvas>-->
+<!--                                    <div id="doughnut-chart-legend" class="mt-5 text-center"></div>-->
+<!--                                  </div>-->
+<!--                                </div>-->
+<!--                              </div>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                        <div class="row flex-grow">-->
+<!--                          <div class="col-12 grid-margin stretch-card">-->
 
-                          </div>
-                        </div>
+<!--                          </div>-->
+<!--                        </div>-->
 
-                      </div>
-                    </div>
+<!--                      </div>-->
+<!--                    </div>-->
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-lg-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Striped Table</h4>
-                  <p class="card-description">
-                    Add class <code>.table-striped</code>
-                  </p>
-                  <div class="table-responsive">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>
-                            Index
-                          </th>
-                          {% for i in cols %}
-                          <th>
-                            {{i}}
-                          </th>
-                           {% endfor %}
-                        </tr>
-                      </thead>
-                      <tbody>
 
-
-                        {% for i in range (len1) %}
-                        <tr>
-                          <td>
-                            <b>{{i+1}}</b>
-                          </td>
-                           {% for j in cols %}
-
-                          <td>
-                          {% if data[j][i]==NaN %}
-                            <p style="color:red">{{data[j][i]}}</p>
-                            {% else %}
-                            <p>{{data[j][i]}}
-                            {% endif %}
-
-
-
-
-                          </td>
-                          {% endfor %}
-
-                        </tr>
-                        {% endfor %}
-
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
-        <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2021. All rights reserved.</span>
-          </div>
-        </footer>
+
         <!-- partial -->
       </div>
       <!-- main-panel ends -->
@@ -413,7 +385,7 @@
       var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
       var doughnutPieData = {
         datasets: [{
-          data: [{{sum1[0]}},{{sum1[1]}}],
+          data: [{{nan_[0]}},{{nan_[1]}}],
           backgroundColor: [
             "#1F3BB3",
             "#FDD0C7",

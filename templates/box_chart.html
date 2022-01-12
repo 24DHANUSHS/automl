@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Auto ML </title>
   <!-- plugins:css -->
-
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
  <link rel="stylesheet" href="{{url_for('static',filename='vendors/feather/feather.css')}}">
   <link rel="stylesheet" href="{{url_for('static',filename='vendors/mdi/css/materialdesignicons.min.css')}}">
@@ -24,6 +24,14 @@
   <link rel="stylesheet" href="{{url_for('static',filename='css/vertical-layout-light/style.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{url_for('static',filename='images/favicon.png')}}" />
+    <style>
+        canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+    </style>
 </head>
 <body>
   <div class="container-scroller">
@@ -102,7 +110,7 @@
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="menu-icon mdi mdi-layers-outline"></i>
-              <span class="menu-title">Prediction</span>
+              <span class="menu-title">Predictions</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="icons">
@@ -111,7 +119,7 @@
               </ul>
             </div>
           </li>
-         <li class="nav-item nav-category">Implementation</li>
+          <li class="nav-item nav-category">Implementation</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="menu-icon mdi mdi-account-circle-outline"></i>
@@ -141,8 +149,8 @@
           </li>
 
           <li class="nav-item">
-           <a class="nav-link" href="{{url_for('logout')}}">
-              <i class="menu-icon mdi mdi-logout"></i>
+            <a class="nav-link" href="{{url_for('logout')}}">
+               <i class="menu-icon mdi mdi-logout"></i>
               <span class="menu-title" style="color:red">Logout</span>
             </a>
           </li>
@@ -153,45 +161,20 @@
   <div class="main-panel">
         <div class="content-wrapper" >
           <div class="row" >
-            <div class="col-lg-9 grid-margin stretch-card">
+            <div class="col-lg-11 grid-margin stretch-card">
               <div class="card">
-                <div class="card-body" >
-                  <h4 class="card-title">Scatter Plot</h4>
+                <div class="card-body">
+                  <h4 class="card-title">Box Plot</h4>
                   <div style="float:right;font-size:15px;" class="card-title"  >
 
-                    <form action="{{url_for('chart')}}" method="post">
-                    X:<select name="x" >
-                      {% if len1!=0 %}
-                      <option selected  value="{{x[-1]}}">{{x[-1]}}</option>
-                      {% endif %}
-                    {% for i in range(len) %}
-                    {% if cols_type[i]!= 'object' and x[-1]!=cols[i] %}
-                    <option value="{{cols[i]}}">{{cols[i]}}</option>
-                    {% endif %}
-                    {% endfor %}
-                      </select>&nbsp;&nbsp;&nbsp;&nbsp;
-                    Y:<select name="y" >
-                      {% if len1!=0 %}
-                      <option selected  value="{{y[-1]}}">{{y[-1]}}</option>
-                      {% endif %}
-                    {% for i in range(len) %}
-                    {% if cols_type[i]!= 'object' and y[-1]!=cols[i] %}
-                    <option value="{{cols[i]}}">{{cols[i]}}</option>
-                    {% endif %}
-                    {% endfor %}
-                    </select>&nbsp;&nbsp;
-                      <button type="submit" class="btn btn-outline-success btn-sm">Submit</button>
 
-                    </form>
 
                   </div>
-                  {% if len1 == 0 %}
-                  <h4>No Column selected</h4>
-                  {% else %}
 
-                  <canvas id="scatterChart" ></canvas>
+                  <div id="container" style="width: 50%;">
+                    <div id="chartContainer" style="height: 370px; width: 200%"></div>
+                  </div>
 
-                  {% endif %}
                   <h6 style="color:red">** Chart will not be disaplyed if it contains null values</h6>
                 </div>
               </div>
@@ -248,70 +231,43 @@
   <script src="{{url_for('static',filename='js/todolist.js')}}"></script>
   <!-- endinject -->
   <!-- Custom js for this page-->
+
+
   <script src="{{url_for('static',filename='js/dashboard.js')}}"></script>
   <script src="{{url_for('static',filename='js/chart.js')}}"></script>
   <script src="{{url_for('static',filename='js/Chart.roundedBarCharts.js')}}"></script>
 
   <!-- Line chart-->
 <script>
+window.onload = function () {
 
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title:{
 
+	},
 
-var scatterChartData = {
-    datasets: [{
-        label: '',
-        data: [
-        {% for i in range (0,len1) %}
-        {
-            x: {{x[i]}},
-            y: {{y[i]}},
-          },
-          {% endfor %}
-         ],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255,99,132,1)'
-        ],
-        borderWidth: 1
-      }
-    ]
-  }
+	axisY: {
+		title: "values",
+		includeZero: true
+	},
+	data: [{
+		type: "boxAndWhisker",
+		upperBoxColor: "#FF5A4D",
+		lowerBoxColor: "#7BCE69",
+		color: "black",
+		xValueFormatString: "string",
+		yValueFormatString: "",
+		dataPoints: [
+		{% for i in range(0,len) %}
+			{ label: "{{x[i]}}",  y: [{{data['min_'][i]}},{{data['q2'][i]}}, {{data['q4'][i]}}, {{data['max_'][i]}}, {{data['q3'][i]}},] },
+         {% endfor %}
+		]
+	}]
+});
+chart.render();
 
-
-  var scatterChartOptions = {
-    scales: {
-      xAxes: [{
-        type: 'linear',
-        position: 'bottom',
-        scaleLabel: {
-            display: true,
-            labelString: '{{x[-1]}}'
-          },
-      }],
-      yAxes: [{
-        type: 'linear',
-        position: 'bottom',
-        scaleLabel: {
-            display: true,
-            labelString: '{{y[-1]}}'
-          },
-      }]
-    }
-  }
-
-  if ($("#scatterChart").length) {
-    var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
-    var scatterChart = new Chart(scatterChartCanvas, {
-      type: 'scatter',
-      data: scatterChartData,
-      options: scatterChartOptions
-    });
-  }
-
-
-
+}
 </script>
 </body>
 </html>

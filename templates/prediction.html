@@ -26,7 +26,7 @@
   <link rel="shortcut icon" href="{{url_for('static',filename='images/favicon.png')}}" />
 </head>
 <body>
-  <div class="container-scroller">
+  <div class="container-scroller"> 
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
@@ -40,18 +40,18 @@
             <h3>Auto Ml</h3>
           </a>
           <a class="navbar-brand brand-logo-mini" href="index.html">
-            <h3>A</h3>
+
           </a>
         </div>
       </div>
-      <div class="navbar-menu-wrapper d-flex align-items-top">
+      <div class="navbar-menu-wrapper d-flex align-items-top"> 
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
             <H2><B>PROJECT_NAME: {{project_name}}</B></H2>
             <p>TYPE: {{type}}</p>
           </li>
         </ul>
-
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -60,18 +60,18 @@
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
       <!-- partial:partials/_settings-panel.html -->
-
+      
       <!-- partial -->
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('home')}}">
+           <a class="nav-link" href="{{url_for('home')}}">
               <i class="mdi mdi-grid-large menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-
+          
           <li class="nav-item nav-category">Forms and Datas</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
@@ -98,7 +98,7 @@
               </ul>
             </div>
           </li>
-
+          
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="menu-icon mdi mdi-layers-outline"></i>
@@ -111,7 +111,7 @@
               </ul>
             </div>
           </li>
-         <li class="nav-item nav-category">Implementation</li>
+          <li class="nav-item nav-category">Implementation</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="menu-icon mdi mdi-account-circle-outline"></i>
@@ -122,7 +122,7 @@
               <ul class="nav flex-column sub-menu">
                 {% if trigger== True %}
                 {% if type=='regression' %}
-               <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='linear')}}"> Linear/Multi Regression </a></li>
+              <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='linear')}}"> Linear/Multi Regression </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='poly')}}"> Polynomial Regression </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='ridge')}}"> Ridge Regression </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{url_for('demo',a='lasso')}}"> Lasso Regression </a></li>
@@ -141,98 +141,170 @@
           </li>
 
           <li class="nav-item">
-           <a class="nav-link" href="{{url_for('logout')}}">
+            <a class="nav-link" href="{{url_for('logout')}}">
               <i class="menu-icon mdi mdi-logout"></i>
               <span class="menu-title" style="color:red">Logout</span>
             </a>
           </li>
         </ul>
       </nav>
-
-
+      <!-- partial -->
   <div class="main-panel">
-        <div class="content-wrapper" >
-          <div class="row" >
-            <div class="col-lg-9 grid-margin stretch-card">
+      <div class="content-wrapper">
+      <div class="col-12 grid-margin stretch-card">
               <div class="card">
-                <div class="card-body" >
-                  <h4 class="card-title">Scatter Plot</h4>
-                  <div style="float:right;font-size:15px;" class="card-title"  >
+                <div class="card-body">
+                  <h4 class="card-title">Predictions</h4>
+                  <p class="card-description">
+                    <b>Note</b>
+                  <p style="color:red">
+                  1. Remove nan values and do encode(dummies) the string atrributes<br>
+                  2. Don't select float values as target class in classification problem only(converted dummies)<br>
+                  3. Drop the index and unwanted columns
 
-                    <form action="{{url_for('chart')}}" method="post">
-                    X:<select name="x" >
-                      {% if len1!=0 %}
-                      <option selected  value="{{x[-1]}}">{{x[-1]}}</option>
-                      {% endif %}
-                    {% for i in range(len) %}
-                    {% if cols_type[i]!= 'object' and x[-1]!=cols[i] %}
-                    <option value="{{cols[i]}}">{{cols[i]}}</option>
-                    {% endif %}
-                    {% endfor %}
-                      </select>&nbsp;&nbsp;&nbsp;&nbsp;
-                    Y:<select name="y" >
-                      {% if len1!=0 %}
-                      <option selected  value="{{y[-1]}}">{{y[-1]}}</option>
-                      {% endif %}
-                    {% for i in range(len) %}
-                    {% if cols_type[i]!= 'object' and y[-1]!=cols[i] %}
-                    <option value="{{cols[i]}}">{{cols[i]}}</option>
-                    {% endif %}
-                    {% endfor %}
-                    </select>&nbsp;&nbsp;
-                      <button type="submit" class="btn btn-outline-success btn-sm">Submit</button>
+                </p>
+                  </p>
+                  <form class="forms-sample" action="{{url_for('predict')}}" method="post">
+                    <div class="form-group">
+                      <h4><label>Select Target class</label></h4>
 
-                    </form>
+                         {% for i in cols %}
+                      <input type="radio" name="target" value="{{i}}" required>
+                        <label> {{i}}</label><br>
+                        {% endfor %}
 
+
+                    </div>
+                    <div class="form-group">
+                      <h4><label>Select Type of splitting Data</label></h4>
+                       <input type="radio" name="split_type" value="70_30_split" required>
+                        <label>70-30% Test Train Split </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <input type="radio" name="split_type" value="Kfold">
+                        <label>K fold cross validation (max-10 splits)</label>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+    <!-- page-body-wrapper ends -->
+
+    <!--Table starts -->
+ {% if pred_res!={} %}
+
+          <div class="row">
+            <div class="col-sm-15">
+
+            <div class="col-lg-15 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Accuracy Table - <b style="color:green">{{split_type}}</b></h4>
+                  <p class="card-description">
+                   Algorithms <code>Accuracy</code>
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>
+                            Algorithm
+                          </th>
+
+                          <th>
+                            {% if type== 'regression' %}
+                            Accuracy (r^2 score out of 100)
+                            {% else %}
+                            Accuracy (Diff bt predict and actual value) %
+                            {% endif %}
+                          </th>
+
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for key,value in pred_res.items() %}
+                        <tr>
+                          <td>
+                            {{key}}
+                          </td>
+                          <td>
+                            {{value}}
+                          </td>
+
+
+                        </tr>
+                      {% endfor %}
+
+                      </tbody>
+                    </table>
                   </div>
-                  {% if len1 == 0 %}
-                  <h4>No Column selected</h4>
-                  {% else %}
-
-                  <canvas id="scatterChart" ></canvas>
-
-                  {% endif %}
-                  <h6 style="color:red">** Chart will not be disaplyed if it contains null values</h6>
                 </div>
               </div>
             </div>
 
 
+      <div class="col-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <b>Detailed Results</b>
+                </div>
+              </div>
+      </div>
+
+         {% for key,parent_dict_item in details.items() %}
+            <div class="row">
+            <div class="col-sm-15">
+
+            <div class="col-lg-15 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">{{key}} - <b style="color:green">{{split_type}}</b></h4>
+
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+
+                      <tbody>
+                      {% for key2, nested_value in parent_dict_item.items() %}
+                        <tr>
+                          <td>
+                            <b> {{key2}}</b>
+                          </td>
+                          <td>
+                            {{nested_value}}
+                          </td>
+
+                        </tr>
+                      {% endfor %}
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+         {% endfor %}
+
+{% endif %}
 
 
-          </div>
-        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
   </div>
-</div>
   </div>
+    </div>
+  <!-- container-scroller -->
 
+  <!-- plugins:js -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <script src="{{url_for('static',filename='vendors/js/vendor.bundle.base.js')}}"></script>
+  <script src="{{url_for('static',filename='vendors/js/vendor.bundle.base.js')}}"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
   <script src="{{url_for('static',filename='vendors/chart.js/Chart.min.js')}}"></script>
@@ -249,69 +321,11 @@
   <!-- endinject -->
   <!-- Custom js for this page-->
   <script src="{{url_for('static',filename='js/dashboard.js')}}"></script>
-  <script src="{{url_for('static',filename='js/chart.js')}}"></script>
   <script src="{{url_for('static',filename='js/Chart.roundedBarCharts.js')}}"></script>
+  <!-- End custom js for this page-->
 
-  <!-- Line chart-->
-<script>
-
-
-
-var scatterChartData = {
-    datasets: [{
-        label: '',
-        data: [
-        {% for i in range (0,len1) %}
-        {
-            x: {{x[i]}},
-            y: {{y[i]}},
-          },
-          {% endfor %}
-         ],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255,99,132,1)'
-        ],
-        borderWidth: 1
-      }
-    ]
-  }
-
-
-  var scatterChartOptions = {
-    scales: {
-      xAxes: [{
-        type: 'linear',
-        position: 'bottom',
-        scaleLabel: {
-            display: true,
-            labelString: '{{x[-1]}}'
-          },
-      }],
-      yAxes: [{
-        type: 'linear',
-        position: 'bottom',
-        scaleLabel: {
-            display: true,
-            labelString: '{{y[-1]}}'
-          },
-      }]
-    }
-  }
-
-  if ($("#scatterChart").length) {
-    var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
-    var scatterChart = new Chart(scatterChartCanvas, {
-      type: 'scatter',
-      data: scatterChartData,
-      options: scatterChartOptions
-    });
-  }
-
-
-
-</script>
+  </div>
 </body>
+
 </html>
+
